@@ -1,3 +1,5 @@
+import sun.misc.Version
+
 object Versions {
 
     val compileSdkVersion = 29
@@ -14,11 +16,7 @@ object Versions {
     val core_ktx = "1.1.0"
     val constraintlayout = "1.1.3"
     val espresso_core = "3.2.0"
-
-    /*
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-implementation 'androidx.core:core-ktx:1.1.0'
-    * */
+    val dagger = "2.23.2"
 }
 
 
@@ -26,8 +24,12 @@ object Dependencies {
     val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
     val coreKtx = "androidx.core:core-ktx:${Versions.core_ktx}"
     val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintlayout}"
-    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin_version}"
-    val junit = "junit:junit:${Versions.junit}"
-    val ext_junit = "androidx.test.ext:junit:${Versions.ext_junit}"
+    val dagger = "com.google.dagger:dagger:${Versions.dagger}"
+    val dagger_android_processor = "com.google.dagger:dagger-android-processor:${Versions.dagger}"
+    val dagger_android_support = "com.google.dagger:dagger-android-support:${Versions.dagger}"
+    val dagger_compiler = "com.google.dagger:dagger-compiler:${Versions.dagger}"
     val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_core}"
+    val ext_junit = "androidx.test.ext:junit:${Versions.ext_junit}"
+    val junit = "junit:junit:${Versions.junit}"
+    val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin_version}"
 }
