@@ -36,6 +36,7 @@ dependencies {
     implementation Dependencies.lifecycle_extensions
     kapt Dependencies.lifecycle_compiler
     implementation Dependencies.lifecycle_viewmodel_ktx
+    implementation Dependencies.legacy_support_v4
     implementation Dependencies.navigation_fragment_ktx
     implementation Dependencies.navigation_ui_ktx
 
@@ -44,6 +45,9 @@ dependencies {
     kapt Dependencies.dagger_compiler
     implementation Dependencies.dagger_android_support
     kapt Dependencies.dagger_android_processor
+
+    // Retrofit
+    implementation Dependencies.retrofit
 
     testImplementation Dependencies.junit
     androidTestImplementation Dependencies.ext_junit
