@@ -1,0 +1,1 @@
+/Users/eugen/StudioProjects/DemoGithubClient/buildSrc/build/classes/kotlin/main/Dependencies.class:/Users/eugen/StudioProjects/DemoGithubClient/buildSrc/build/classes/kotlin/main/Versions.class
