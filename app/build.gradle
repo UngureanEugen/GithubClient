@@ -32,12 +32,18 @@ dependencies {
     implementation Dependencies.coreKtx
     implementation Dependencies.constraintLayout
 
-    //Dagger
+    // Architecture Components
+    implementation Dependencies.lifecycle_extensions
+    kapt Dependencies.lifecycle_compiler
+    implementation Dependencies.lifecycle_viewmodel_ktx
+    implementation Dependencies.navigation_fragment_ktx
+    implementation Dependencies.navigation_ui_ktx
+
+    // Dagger
     implementation Dependencies.dagger
     kapt Dependencies.dagger_compiler
     implementation Dependencies.dagger_android_support
     kapt Dependencies.dagger_android_processor
-
 
     testImplementation Dependencies.junit
     androidTestImplementation Dependencies.ext_junit

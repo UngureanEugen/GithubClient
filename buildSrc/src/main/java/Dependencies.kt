@@ -1,7 +1,6 @@
 import sun.misc.Version
 
 object Versions {
-
     val compileSdkVersion = 29
     val buildToolsVersion = "29.0.2"
     val minSdkVersion = 19
@@ -17,6 +16,8 @@ object Versions {
     val constraintlayout = "1.1.3"
     val espresso_core = "3.2.0"
     val dagger = "2.23.2"
+    val lifecycle = "2.1.0"
+    val navigation = "2.1.0"
 }
 
 
@@ -32,4 +33,10 @@ object Dependencies {
     val ext_junit = "androidx.test.ext:junit:${Versions.ext_junit}"
     val junit = "junit:junit:${Versions.junit}"
     val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin_version}"
+    val lifecycle_compiler = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
+    val lifecycle_extensions = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
+    val lifecycle_viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+    val navigation_fragment_ktx = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
+    val navigation_ui_ktx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+
 }
