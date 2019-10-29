@@ -38,6 +38,7 @@ dependencies {
 
     // Architecture Components
     implementation Dependencies.lifecycle_extensions
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt Dependencies.lifecycle_compiler
     implementation Dependencies.lifecycle_viewmodel_ktx
     implementation Dependencies.legacy_support_v4

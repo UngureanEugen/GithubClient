@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
-interface GithubService {
+interface GithubAuthService {
     /*
     Client ID
     27dab29469f04646179e
@@ -22,7 +22,7 @@ interface GithubService {
     @FormUrlEncoded
     suspend fun getAccessToken(@Field("client_id") clientId: String,
                        @Field("client_secret") clientSecret: String,
-                       @Field("code") code: String): Response<AccessToken>
+                       @Field("code") code: String): AccessToken?
 
 
     companion object {

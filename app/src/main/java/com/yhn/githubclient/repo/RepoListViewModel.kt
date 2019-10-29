@@ -1,10 +1,14 @@
 package com.yhn.githubclient.repo
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
-import com.yhn.githubclient.data.source.GithubService
+import com.yhn.githubclient.data.Result
+import com.yhn.githubclient.data.source.CredentialHelper
+import com.yhn.githubclient.data.source.GithubAuthService
 import com.yhn.githubclient.domain.GetReposUseCase
+import com.yhn.githubclient.util.apiCall
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,7 +17,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 
-class RepoViewModel @Inject constructor() : ViewModel() {
+class RepoListViewModel @Inject constructor() : ViewModel() {
+
+    //    private val repos = MutableLiveData<Task>
+    val error = MutableLiveData<String>()
+
+    //todo move this dependencies outside
     val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -27,12 +36,21 @@ class RepoViewModel @Inject constructor() : ViewModel() {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(httpClient)
         .build()
-    val service = retrofit.create(GithubService::class.java)
+    val service = retrofit.create(GithubAuthService::class.java)
 
     fun start() {
         val getReposUseCase = GetReposUseCase(service)
         viewModelScope.launch {
-            getReposUseCase.invoke()
+            val result = apiCall { getReposUseCase.invoke() }
+            when (result) {
+                is Result.Success -> if (result.data?.error != null) {
+                    error.postValue(result.data.error)
+                } else {
+                    CredentialHelper.accessToken = result.data?.accessToken ?: ""
+                }
+                is Result.Error -> ""//show error
+                Result.Loading -> "" //progress
+            }
         }
     }
 }

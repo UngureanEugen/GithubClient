@@ -13,7 +13,7 @@ class LoginUseCase(private val activity: Activity?) {
     fun invoke() {
         val intent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=$redirectUrl")
+            Uri.parse("https://github.com/login/oauth/authorize?client_id=${clientId.second}&scope=repo&redirect_uri=${redirectUrl}")
         )
         activity?.startActivity(intent)
     }
