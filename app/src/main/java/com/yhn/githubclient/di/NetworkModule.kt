@@ -1,4 +1,4 @@
-package di
+package com.yhn.githubclient.di
 
 import dagger.Module
 

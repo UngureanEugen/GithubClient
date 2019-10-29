@@ -20,6 +20,7 @@ object Versions {
     val navigation = "2.1.0"
     val retrofit = "2.6.2"
     val legacy_support_v4 = "1.0.0"
+    val gson = "2.6.2"
 }
 
 
@@ -42,5 +43,5 @@ object Dependencies {
     val navigation_ui_ktx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     val legacy_support_v4 = "androidx.legacy:legacy-support-v4:${Versions.legacy_support_v4}"
-
+    val gson_converter = "com.squareup.retrofit2:converter-gson:${Versions.gson}"
 }

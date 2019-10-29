@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package di
+package com.yhn.githubclient.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
