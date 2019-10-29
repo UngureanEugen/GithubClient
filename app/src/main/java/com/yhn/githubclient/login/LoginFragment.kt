@@ -1,5 +1,7 @@
 package com.yhn.githubclient.login
 
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -22,6 +24,11 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.login_fragment, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        println(activity?.intent?.data)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
