@@ -1,21 +1,21 @@
 package com.yhn.githubclient.data.source
 
-import com.yhn.githubclient.data.AccessToken
-import retrofit2.Call
+import com.yhn.githubclient.data.model.RepoListResponse
 import retrofit2.Response
 import retrofit2.http.*
 
 interface GithubApiService {
 
     @GET("search/code")
-    suspend fun getAccessToken(
+    suspend fun search(
         @Header("Accept") acceptType: String,
         @Header("Authorization") accessToken: String,
-        @Path("q") query: String,
-        @Field("per_page") perPage: Int,
-        @Field("page") page: Int
-    ): AccessToken?
-
+        @Query("q") query: String,
+        @Query("per_page") perPage: Int,
+        @Query("page") page: Int,
+        @Query("sort") sort: String = "stars",
+        @Query("order") order: String = "desc"
+    ): RepoListResponse
 
     companion object {
         //todo move url to a proper place

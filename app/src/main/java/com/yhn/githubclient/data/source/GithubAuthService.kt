@@ -1,8 +1,6 @@
 package com.yhn.githubclient.data.source
 
-import com.yhn.githubclient.data.AccessToken
-import retrofit2.Call
-import retrofit2.Response
+import com.yhn.githubclient.data.model.AccessToken
 import retrofit2.http.*
 
 interface GithubAuthService {
