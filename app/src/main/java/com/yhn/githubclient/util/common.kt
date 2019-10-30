@@ -3,7 +3,6 @@ package com.yhn.githubclient.util
 import com.yhn.githubclient.data.Result
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 
 suspend fun <T> apiCall(apiCall: suspend () -> T): Result<T> {
     return try {

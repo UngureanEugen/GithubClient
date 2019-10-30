@@ -3,21 +3,14 @@ package com.yhn.githubclient.repo
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.GsonBuilder
 import com.yhn.githubclient.data.Result
 import com.yhn.githubclient.data.model.RepoItem
 import com.yhn.githubclient.data.source.CredentialHelper
-import com.yhn.githubclient.data.source.GithubApiService
-import com.yhn.githubclient.data.source.GithubAuthService
 import com.yhn.githubclient.domain.GetAccessTokenUseCase
 import com.yhn.githubclient.domain.SearchReposUseCase
 import com.yhn.githubclient.util.ApiException
 import com.yhn.githubclient.util.apiCall
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
