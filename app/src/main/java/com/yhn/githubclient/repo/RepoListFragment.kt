@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -54,6 +55,21 @@ class RepoListFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         searchView.setOnQueryTextListener(queryTextListener)
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                // nop
+            }
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                repoAdapter.clear()
+                viewModel.search(
+                    searchView.query.toString(),
+                    resources.getStringArray(R.array.languages)[position],
+                    true
+                )
+            }
+
+        }
     }
 
     override fun onResume() {
@@ -77,13 +93,13 @@ class RepoListFragment : DaggerFragment() {
 
     private val queryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(p0: String): Boolean {
-            viewModel.search(p0, false)
+            viewModel.search(p0, languageSpinner.selectedItem.toString(), false)
             repoAdapter.clear()
             return true
         }
 
         override fun onQueryTextChange(p0: String): Boolean {
-            viewModel.search(p0, true)
+            viewModel.search(p0, languageSpinner.selectedItem.toString(), true)
             repoAdapter.clear()
             return true
         }

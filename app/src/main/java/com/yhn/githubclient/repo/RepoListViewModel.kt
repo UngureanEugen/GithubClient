@@ -2,6 +2,7 @@ package com.yhn.githubclient.repo
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
@@ -27,7 +28,6 @@ class RepoListViewModel @Inject constructor() : ViewModel() {
     val error = MutableLiveData<String>()
     val repos = MutableLiveData<List<RepoItem>>()
     val refreshAccessToken = MutableLiveData<Unit>()
-    val language = "kotlin"
 
     private var page = AtomicInteger(0)
 
@@ -74,11 +74,16 @@ class RepoListViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun search(query: String, resetPageNumber: Boolean) {
+    fun search(query: String, language: String = "kotlin", resetPageNumber: Boolean) {
         viewModelScope.launch {
             if (resetPageNumber) page.set(0)
             when (val result =
-                apiCall { searchReposUseCase.invoke("$query+language:$language", page.incrementAndGet()) }) {
+                apiCall {
+                    searchReposUseCase.invoke(
+                        "$query+language:$language",
+                        page.incrementAndGet()
+                    )
+                }) {
                 is Result.Success -> repos.postValue(result.data.items)
                 is Result.Error -> {
                     error.postValue(result.exception.message)
