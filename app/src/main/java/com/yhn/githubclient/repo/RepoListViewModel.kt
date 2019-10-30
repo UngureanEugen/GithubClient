@@ -1,8 +1,6 @@
 package com.yhn.githubclient.repo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
@@ -11,7 +9,7 @@ import com.yhn.githubclient.data.model.RepoItem
 import com.yhn.githubclient.data.source.CredentialHelper
 import com.yhn.githubclient.data.source.GithubApiService
 import com.yhn.githubclient.data.source.GithubAuthService
-import com.yhn.githubclient.domain.GetReposUseCase
+import com.yhn.githubclient.domain.GetAccessTokenUseCase
 import com.yhn.githubclient.domain.SearchReposUseCase
 import com.yhn.githubclient.util.ApiException
 import com.yhn.githubclient.util.apiCall
@@ -23,49 +21,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
-class RepoListViewModel @Inject constructor() : ViewModel() {
+class RepoListViewModel @Inject constructor(
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val searchReposUseCase: SearchReposUseCase
+) : ViewModel() {
 
     private var page = AtomicInteger(0)
     private var searchJob: Job? = null
 
     val error = MutableLiveData<String>()
     val repos = MutableLiveData<List<RepoItem>>()
-    val refreshAccessToken = MutableLiveData<Unit>()
-
-    //todo this dependencies to di
-    val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-    val httpClient = OkHttpClient.Builder().apply { addInterceptor(logging) }.build()
-
-    var gson = GsonBuilder()
-        .setLenient()
-        .create()
-
-    val retrofit = Retrofit.Builder()
-        .baseUrl("https://github.com/")
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(httpClient)
-        .build()
-
-    val retrofitApi = Retrofit.Builder()
-        .baseUrl("https://api.github.com/")
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(httpClient)
-        .build()
-
-    val service = retrofit.create(GithubAuthService::class.java)
-    val apiService = retrofitApi.create(GithubApiService::class.java)
-
-    private val getReposUseCase = GetReposUseCase(service)
-    private val searchReposUseCase = SearchReposUseCase(apiService)
+    val refreshAccessCodeToken = MutableLiveData<Unit>()
 
     fun verifyAccessToken() {
-        if (CredentialHelper.accessToken.isNotEmpty()) return
         viewModelScope.launch {
-            when (val result = apiCall { getReposUseCase.invoke() }) {
+            when (val result = apiCall { getAccessTokenUseCase.invoke() }) {
                 is Result.Success -> if (result.data?.error != null) {
-                    refreshAccessToken.postValue(Unit)
+                    refreshAccessCodeToken.postValue(Unit)
                 } else {
                     CredentialHelper.accessToken = result.data?.accessToken ?: ""
                 }
@@ -94,8 +66,12 @@ class RepoListViewModel @Inject constructor() : ViewModel() {
                     is Result.Success -> repos.postValue(result.data.items)
                     is Result.Error -> {
                         error.postValue(result.exception.message)
-                        if (result.exception is ApiException && result.exception.code == 403) {
-                            refreshAccessToken.postValue(Unit)
+                        if (result.exception is ApiException) {
+                            when (result.exception.code) {
+                                403 -> refreshAccessCodeToken.postValue(Unit)
+                                401 -> verifyAccessToken()
+                                else -> Unit
+                            }
                         }
                     }
                     Result.Loading -> Unit // no time for progress

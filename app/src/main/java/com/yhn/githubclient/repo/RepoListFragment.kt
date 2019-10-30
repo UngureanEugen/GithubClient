@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.yhn.githubclient.R
 import com.yhn.githubclient.domain.AuthorizeUseCase
-import com.yhn.githubclient.domain.SearchReposUseCase.Companion.PAGE_SIZE
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_repo_list.*
-import java.util.*
 import javax.inject.Inject
 
 
@@ -28,7 +26,7 @@ class RepoListFragment : DaggerFragment() {
 
     private val viewModel by viewModels<RepoListViewModel> { viewModelFactory }
 
-    private lateinit var repoAdapter: RepoListAdapter
+    private val repoAdapter = RepoListAdapter(context)
 
     private val authorizeUseCase: AuthorizeUseCase
         get() {
@@ -40,11 +38,8 @@ class RepoListFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_repo_list, container, false)
-        repoAdapter = RepoListAdapter(context)
         with(view.findViewById<RecyclerView>(R.id.recycler)) {
-            val linearLayoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            layoutManager = linearLayoutManager
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = repoAdapter
         }
         return view
@@ -83,7 +78,7 @@ class RepoListFragment : DaggerFragment() {
             repoAdapter.populate(it)
             repoAdapter.notifyDataSetChanged()
         })
-        viewModel.refreshAccessToken.observe(this, Observer {
+        viewModel.refreshAccessCodeToken.observe(this, Observer {
             authorizeUseCase.invoke()
         })
     }

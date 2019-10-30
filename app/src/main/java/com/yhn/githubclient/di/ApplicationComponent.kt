@@ -13,7 +13,8 @@ import javax.inject.Singleton
     modules = [
         RepoListModule::class,
         AndroidSupportInjectionModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        RepoUseCaseModule::class
     ]
 )
 interface ApplicationComponent : AndroidInjector<DemoApp> {
@@ -22,24 +23,3 @@ interface ApplicationComponent : AndroidInjector<DemoApp> {
         fun create(@BindsInstance applicationContext: Context): ApplicationComponent
     }
 }
-
-/*
-@Singleton
-@Component(
-    modules = [
-        ApplicationModule::class,
-        AndroidSupportInjectionModule::class,
-        TasksModule::class,
-        TaskDetailModule::class,
-        AddEditTaskModule::class,
-        StatisticsModule::class
-    ])
-interface ApplicationComponent : AndroidInjector<TodoApplication> {
-
-    @Component.Factory
-    interface Factory {
-        fun create(@BindsInstance applicationContext: Context): ApplicationComponent
-    }
-}
-
-* */

@@ -17,6 +17,7 @@ class SearchReposUseCase(val githubApi: GithubApiService) {
             query = query, perPage = PAGE_SIZE, page = page
         )
     }
+
     companion object {
         const val PAGE_SIZE = 50
     }
