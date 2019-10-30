@@ -17,19 +17,4 @@ interface GithubApiService {
         @Query("sort") sort: String = "stars",
         @Query("order") order: String = "desc"
     ): RepoListResponse
-
-    companion object {
-        //todo move url to a proper place
-        const val BASE_URL = "https://api.github.com"
-    }
-
-    /*
-       @Headers(
-        "Accept: application/vnd.github.v3+json",
-        "Authorization: token ${CredentialHelper.accessToken}"
-    )
-    * */
-
-//https://api.github.com/search/code?q=addClass+user:mozilla&per_page=50&page=2
-
 }

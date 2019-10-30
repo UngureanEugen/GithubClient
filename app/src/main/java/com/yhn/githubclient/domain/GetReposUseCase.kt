@@ -6,10 +6,9 @@ import com.yhn.githubclient.data.source.CredentialHelper.clientSecret
 import com.yhn.githubclient.data.source.CredentialHelper.code
 import com.yhn.githubclient.data.source.GithubAuthService
 
-//todo modify
-class GetReposUseCase(val githubApi: GithubAuthService) {
+class GetReposUseCase(val githubAuth: GithubAuthService) {
     suspend operator fun invoke(): AccessToken? {
-        return githubApi.getAccessToken(
+        return githubAuth.getAccessToken(
                 clientId = clientId.second,
                 clientSecret = clientSecret.second,
                 code = code

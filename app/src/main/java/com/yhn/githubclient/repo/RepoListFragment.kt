@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.yhn.githubclient.R
 import com.yhn.githubclient.domain.AuthorizeUseCase
+import com.yhn.githubclient.domain.SearchReposUseCase.Companion.PAGE_SIZE
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_repo_list.*
+import java.util.*
 import javax.inject.Inject
 
 
@@ -40,14 +42,10 @@ class RepoListFragment : DaggerFragment() {
         val view = inflater.inflate(R.layout.fragment_repo_list, container, false)
         repoAdapter = RepoListAdapter(context)
         with(view.findViewById<RecyclerView>(R.id.recycler)) {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            val linearLayoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = linearLayoutManager
             adapter = repoAdapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-
-                }
-            })
         }
         return view
     }
@@ -61,8 +59,7 @@ class RepoListFragment : DaggerFragment() {
             }
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                repoAdapter.clear()
-                viewModel.search(
+                onQuery(
                     searchView.query.toString(),
                     resources.getStringArray(R.array.languages)[position],
                     true
@@ -93,16 +90,21 @@ class RepoListFragment : DaggerFragment() {
 
     private val queryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(p0: String): Boolean {
-            viewModel.search(p0, languageSpinner.selectedItem.toString(), false)
-            repoAdapter.clear()
+            onQuery(p0, languageSpinner.selectedItem.toString(), true)
             return true
         }
 
         override fun onQueryTextChange(p0: String): Boolean {
-            viewModel.search(p0, languageSpinner.selectedItem.toString(), true)
-            repoAdapter.clear()
+            onQuery(p0, languageSpinner.selectedItem.toString(), true)
             return true
         }
 
+    }
+
+    private val onQuery: (String, String, Boolean) -> Unit = { query, language, shouldReset ->
+        if (shouldReset) {
+            repoAdapter.clear()
+        }
+        viewModel.search(query, language, shouldReset)
     }
 }

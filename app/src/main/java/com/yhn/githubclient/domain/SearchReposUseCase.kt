@@ -14,7 +14,10 @@ class SearchReposUseCase(val githubApi: GithubApiService) {
             modifiedSince = dateFormat.format(Date()),
             acceptType = "application/vnd.github.v3+json",
             accessToken = "token ${CredentialHelper.accessToken}",
-            query = query, perPage = 50, page = page
+            query = query, perPage = PAGE_SIZE, page = page
         )
+    }
+    companion object {
+        const val PAGE_SIZE = 50
     }
 }

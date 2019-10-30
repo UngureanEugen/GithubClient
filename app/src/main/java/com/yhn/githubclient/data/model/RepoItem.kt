@@ -23,5 +23,8 @@ data class RepoItem(
 	val sha: String? = null,
 
 	@SerializedName("url")
-	val url: String? = null
+	val url: String? = null,
+
+	@SerializedName("owner")
+	val owner: Owner? = null
 )

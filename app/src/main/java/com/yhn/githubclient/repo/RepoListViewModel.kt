@@ -25,11 +25,12 @@ import javax.inject.Inject
 
 class RepoListViewModel @Inject constructor() : ViewModel() {
 
+    private var page = AtomicInteger(0)
+    private var searchJob: Job? = null
+
     val error = MutableLiveData<String>()
     val repos = MutableLiveData<List<RepoItem>>()
     val refreshAccessToken = MutableLiveData<Unit>()
-
-    private var page = AtomicInteger(0)
 
     //todo this dependencies to di
     val logging = HttpLoggingInterceptor().apply {
@@ -74,24 +75,31 @@ class RepoListViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * cancel previous search job when new search is requested during the delay
+     */
     fun search(query: String, language: String = "kotlin", resetPageNumber: Boolean) {
         viewModelScope.launch {
-            if (resetPageNumber) page.set(0)
-            when (val result =
-                apiCall {
-                    searchReposUseCase.invoke(
-                        "$query+language:$language",
-                        page.incrementAndGet()
-                    )
-                }) {
-                is Result.Success -> repos.postValue(result.data.items)
-                is Result.Error -> {
-                    error.postValue(result.exception.message)
-                    if (result.exception is ApiException && result.exception.code == 403) {
-                        refreshAccessToken.postValue(Unit)
+            searchJob?.cancelAndJoin()?.also { searchJob = null }
+            searchJob = launch {
+                delay(800)
+                if (resetPageNumber) page.set(0)
+                when (val result =
+                    apiCall {
+                        searchReposUseCase.invoke(
+                            "$query+language:$language",
+                            page.incrementAndGet()
+                        )
+                    }) {
+                    is Result.Success -> repos.postValue(result.data.items)
+                    is Result.Error -> {
+                        error.postValue(result.exception.message)
+                        if (result.exception is ApiException && result.exception.code == 403) {
+                            refreshAccessToken.postValue(Unit)
+                        }
                     }
+                    Result.Loading -> Unit // no time for progress
                 }
-                Result.Loading -> Unit // no time for progress
             }
         }
     }

@@ -40,10 +40,12 @@ class RepoListAdapter(private val context: Context?) :
 
     class RepoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.name)
+        val userName: TextView = itemView.findViewById(R.id.userName)
         val score: TextView = itemView.findViewById(R.id.score)
 
         fun bind(item: RepoItem) {
             name.text = item.name
+            userName.text = item.owner?.login
             score.text = "${item.score}"
         }
     }
