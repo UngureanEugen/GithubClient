@@ -11,5 +11,5 @@ data class RepoListResponse(
     val incompleteResults: Boolean? = null,
 
     @SerializedName("items")
-    val items: List<RepoItem?>? = null
+    val items: List<RepoItem> = emptyList()
 )

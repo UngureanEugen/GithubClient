@@ -19,9 +19,6 @@ data class RepoItem(
 	@SerializedName("git_url")
 	val gitUrl: String? = null,
 
-	@SerializedName("repository")
-	val repository: Repository? = null,
-
 	@SerializedName("sha")
 	val sha: String? = null,
 

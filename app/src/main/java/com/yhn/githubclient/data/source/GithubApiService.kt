@@ -6,8 +6,9 @@ import retrofit2.http.*
 
 interface GithubApiService {
 
-    @GET("search/code")
+    @GET("/search/repositories")
     suspend fun search(
+        @Header("If-Modified-Since") modifiedSince: String,
         @Header("Accept") acceptType: String,
         @Header("Authorization") accessToken: String,
         @Query("q") query: String,

@@ -11,10 +11,8 @@ suspend fun <T> apiCall(apiCall: suspend () -> T): Result<T> {
     } catch (throwable: Throwable) {
         when (throwable) {
             is IOException -> Result.Error(throwable)
-            is HttpException ->  Result.Error(Exception(throwable))
-            else -> {
-                Result.Error(IllegalStateException(""))
-            }
+            is HttpException -> Result.Error(ApiException(throwable.code(), throwable.message()))
+            else -> Result.Error(IllegalStateException(""))
         }
     }
 }

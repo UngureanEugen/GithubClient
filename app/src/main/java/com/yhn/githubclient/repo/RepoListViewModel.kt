@@ -6,27 +6,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.yhn.githubclient.data.Result
+import com.yhn.githubclient.data.model.RepoItem
 import com.yhn.githubclient.data.source.CredentialHelper
 import com.yhn.githubclient.data.source.GithubApiService
 import com.yhn.githubclient.data.source.GithubAuthService
 import com.yhn.githubclient.domain.GetReposUseCase
 import com.yhn.githubclient.domain.SearchReposUseCase
+import com.yhn.githubclient.util.ApiException
 import com.yhn.githubclient.util.apiCall
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
-
 
 class RepoListViewModel @Inject constructor() : ViewModel() {
 
-    //    private val repos = MutableLiveData<Task>
     val error = MutableLiveData<String>()
+    val repos = MutableLiveData<List<RepoItem>>()
+    val refreshAccessToken = MutableLiveData<Unit>()
+    val language = "kotlin"
 
-    //todo move this dependencies outside
+    private var page = AtomicInteger(0)
+
+    //todo this dependencies to di
     val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -51,34 +56,38 @@ class RepoListViewModel @Inject constructor() : ViewModel() {
     val service = retrofit.create(GithubAuthService::class.java)
     val apiService = retrofitApi.create(GithubApiService::class.java)
 
-    val getReposUseCase = GetReposUseCase(service)
-    val searchReposUseCase = SearchReposUseCase(apiService)
+    private val getReposUseCase = GetReposUseCase(service)
+    private val searchReposUseCase = SearchReposUseCase(apiService)
 
-    fun start() {
-
+    fun verifyAccessToken() {
+        if (CredentialHelper.accessToken.isNotEmpty()) return
         viewModelScope.launch {
-            val result = apiCall { getReposUseCase.invoke() }
-            when (result) {
+            when (val result = apiCall { getReposUseCase.invoke() }) {
                 is Result.Success -> if (result.data?.error != null) {
-                    error.postValue(result.data.error)
+                    refreshAccessToken.postValue(Unit)
                 } else {
                     CredentialHelper.accessToken = result.data?.accessToken ?: ""
                 }
-                is Result.Error -> ""//show error
-                Result.Loading -> "" //progress
+                is Result.Error -> error.postValue(result.toString())
+                Result.Loading -> Unit
             }
         }
     }
 
-    fun search(query: String?, page: Int) {
-        var coroutineContext: CoroutineContext? = null
-
+    fun search(query: String, resetPageNumber: Boolean) {
         viewModelScope.launch {
-            val result = apiCall {
-                Log.e("bla", "invoked")
-                searchReposUseCase.invoke(query ?: "", page)
+            if (resetPageNumber) page.set(0)
+            when (val result =
+                apiCall { searchReposUseCase.invoke("$query+language:$language", page.incrementAndGet()) }) {
+                is Result.Success -> repos.postValue(result.data.items)
+                is Result.Error -> {
+                    error.postValue(result.exception.message)
+                    if (result.exception is ApiException && result.exception.code == 403) {
+                        refreshAccessToken.postValue(Unit)
+                    }
+                }
+                Result.Loading -> Unit // no time for progress
             }
-            Log.e("tag", result.toString())
         }
     }
 }
